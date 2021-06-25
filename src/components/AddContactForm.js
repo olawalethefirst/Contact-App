@@ -7,22 +7,29 @@ function AddContactForm() {
             case 'ACTIVATE_BUTTON':
                 return { ...state, buttonDisabled: false, opacity: 1 };
             case 'DEACTIVATE_BUTTON':
-                return { ...state, buttonDisabled: true, opacity: 0.5 };
+                return { ...state, buttonDisabled: true, opacity: 0.4 };
             case 'BUTTON_PRESSED':
-                return { ...state, opacity: 0.5 };
+                return { ...state, opacity: 0.4 };
             case 'BUTTON_RELEASED':
                 return { ...state, opacity: 1 };
             case 'UPDATE_NAME':
                 return { ...state, name: action.payload };
             case 'UPDATE_PHONE':
                 return { ...state, phone: action.payload };
+            case 'blank':
+                return {
+                    buttonDisabled: true,
+                    opacity: 0.4,
+                    name: '',
+                    phone: '',
+                };
             default:
                 return state;
         }
     };
     const [state, dispatch] = useReducer(reducer, {
         buttonDisabled: true,
-        opacity: 0.5,
+        opacity: 0.4,
         name: '',
         phone: '',
     });
@@ -35,32 +42,34 @@ function AddContactForm() {
         dispatch({ type: 'BUTTON_RELEASED' });
         // return;
     };
-    const validateButton = (state) => {
-        if (true) {
-            console.log(state);
+    const validateButton = () => {
+        if (
+            state.name.length >= 3 &&
+            +state.phone > 0 &&
+            state.phone.length >= 7
+        ) {
+            dispatch({ type: 'ACTIVATE_BUTTON' });
+        } else {
+            dispatch({ type: 'DEACTIVATE_BUTTON' });
         }
     };
 
     const updateField = (field, text) => {
         switch (field) {
             case 'name':
-                console.log('name', field);
                 dispatch({ type: 'UPDATE_NAME', payload: text });
                 return;
             case 'phone':
-                console.log('phone', field);
                 dispatch({ type: 'UPDATE_PHONE', payload: text });
                 return;
             default:
             //     return;
         }
-        console.log(state);
     };
 
     useEffect(() => {
-        validateButton(state);
-        // console.log(state.phone.length >= 7);
-    }, [state]);
+        validateButton();
+    }, [state.name, state.phone]);
 
     return (
         <View style={styles.container}>
