@@ -1,10 +1,9 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import contacts from '../assets/contacts';
 import ContactListSection from '../components/ContactListSection';
-// import Constants from 'expo-constants';
+import { connect } from 'react-redux';
 
-const ContactList = ({ navigation }) => {
+const ContactList = ({ contacts, navigation }) => {
     const navigateToContactDetails = (contact) => {
         navigation.navigate('ContactDetails', { contact: contact });
     };
@@ -25,4 +24,8 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ContactList;
+const mapStateToProps = ({ contacts }) => ({
+    contacts,
+});
+
+export default connect(mapStateToProps)(ContactList);

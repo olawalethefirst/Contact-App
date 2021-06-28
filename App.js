@@ -10,6 +10,12 @@ import ContactDetailsScreen from './src/screens/ContactDetailsScreen';
 import AddContactScreen from './src/screens/AddContactScreen';
 import AddContactIcon from './src/components/AddContactIcon';
 import HeaderIcon from './src/components/HeaderIcon';
+import HeaderBackIcon from './src/components/HeaderBackIcon';
+import { persistor, store } from './src/redux/store';
+import { Provider, useSelector } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import ContactListTabIcon from './src/components/ContactListTabIcon';
+import SettingsTabIcon from './src/components/SettingsTabIcon';
 
 const MainStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -18,19 +24,16 @@ const SettingsStack = createStackNavigator();
 const navigateToAddContactScreen = (navigation) => {
     navigation.navigate('AddContact');
 };
-const styles = StyleSheet.create({
-    headerLeft: {
-        marginHorizontal: 15,
-    },
-    addContact: {
-        marginHorizontal: 15,
-    },
-});
-let isLoggedIn = true;
 
 function ContactsFlow() {
     return (
-        <ContactStack.Navigator initialRouteName="ContactList">
+        <ContactStack.Navigator
+            initialRouteName="ContactList"
+            screenOptions={{
+                headerBackTitleVisible: false,
+                headerBackImage: () => <HeaderBackIcon />,
+            }}
+        >
             <ContactStack.Screen
                 name="ContactList"
                 component={ContactListScreen}
@@ -62,6 +65,10 @@ function ContactsFlow() {
                     },
                 }) => ({
                     title: contact.name,
+                    headerTitleStyle: {
+                        color: 'blue',
+                        fontSize: 25,
+                    },
                 })}
             />
         </ContactStack.Navigator>
@@ -83,14 +90,36 @@ function SettingsFlow() {
 
 function MainFLow() {
     return (
-        <Tab.Navigator initialRouteName="Login">
-            <Tab.Screen name="ContactsFlow" component={ContactsFlow} />
-            <Tab.Screen name="SettingsFlow" component={SettingsFlow} />
+        <Tab.Navigator
+            initialRouteName="Login"
+            tabBarOptions={{
+                showLabel: false,
+            }}
+        >
+            <Tab.Screen
+                name="ContactsFlow"
+                component={ContactsFlow}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <ContactListTabIcon focused={focused} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="SettingsFlow"
+                component={SettingsFlow}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <SettingsTabIcon focused={focused} />
+                    ),
+                }}
+            />
         </Tab.Navigator>
     );
 }
 
-export default function App() {
+function App() {
+    const token = useSelector(({ user }) => user.token);
     return (
         <NavigationContainer>
             <MainStack.Navigator
@@ -99,7 +128,7 @@ export default function App() {
                     headerShown: false,
                 }}
             >
-                {isLoggedIn ? (
+                {token ? (
                     <MainStack.Screen name="MainFlow" component={MainFLow} />
                 ) : (
                     <MainStack.Screen name="Login" component={LoginScreen} />
@@ -108,3 +137,11 @@ export default function App() {
         </NavigationContainer>
     );
 }
+
+export default () => (
+    <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+            <App />
+        </PersistGate>
+    </Provider>
+);

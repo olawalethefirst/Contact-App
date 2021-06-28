@@ -34,7 +34,7 @@ const ContactListSection = ({ contacts, navigateToContactDetails }) => {
             style={styles.container}
             stickySectionHeadersEnabled
             sections={sections}
-            keyExtractor={(item) => item.name + item.phone}
+            keyExtractor={(item, index) => item.name + item.phone + index}
             renderItem={({ item }) => (
                 <ContactRow
                     contact={item}

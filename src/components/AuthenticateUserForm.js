@@ -7,9 +7,17 @@ import {
     Text,
 } from 'react-native';
 
-const AuthenticateUserForm = ({ authenticateName, authenticateAction }) => {
+const AuthenticateUserForm = ({
+    authenticateName,
+    authenticateAction,
+    errorMessage,
+}) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
+    const useAuthentication = () => {
+        authenticateAction(username, password);
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -31,12 +39,10 @@ const AuthenticateUserForm = ({ authenticateName, authenticateAction }) => {
                 secureTextEntry
                 onChangeText={(text) => setPassword(text)}
                 returnKeyType="done"
-                onSubmitEditing={() => console.log('submit')}
+                onSubmitEditing={useAuthentication}
             />
-            <TouchableOpacity
-                style={styles.button}
-                onPress={authenticateAction}
-            >
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+            <TouchableOpacity style={styles.button} onPress={useAuthentication}>
                 <Text style={styles.buttonText}>{authenticateName}</Text>
             </TouchableOpacity>
         </SafeAreaView>
@@ -56,7 +62,6 @@ const styles = StyleSheet.create({
     },
     button: {
         height: 50,
-        width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
         alignSelf: 'center',
@@ -65,6 +70,11 @@ const styles = StyleSheet.create({
         color: 'blue',
         fontSize: 20,
         fontWeight: '400',
+        padding: 10,
+    },
+    errorMessage: {
+        color: 'red',
+        padding: 5,
     },
 });
 

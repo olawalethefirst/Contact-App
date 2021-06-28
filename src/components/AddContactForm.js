@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import { Text, TextInput, View, StyleSheet, Pressable } from 'react-native';
 
-function AddContactForm() {
+function AddContactForm({ addContact, navigation }) {
     const reducer = (state, action) => {
         switch (action.type) {
             case 'ACTIVATE_BUTTON':
@@ -97,7 +97,8 @@ function AddContactForm() {
             <Pressable
                 style={styles.button}
                 onPress={() => {
-                    console.log('submit');
+                    addContact({ name: state.name, phone: state.phone });
+                    navigation.navigate('ContactList');
                 }}
                 onPressIn={onPressIn}
                 onPressOut={onPressOut}
@@ -128,7 +129,6 @@ const styles = StyleSheet.create({
     },
     button: {
         height: 50,
-        width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
         alignSelf: 'center',
@@ -136,6 +136,7 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 20,
         fontWeight: '400',
+        padding: 10,
     },
 });
 
